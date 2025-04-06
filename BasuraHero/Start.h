@@ -210,7 +210,7 @@ namespace BasuraHero {
 
 	private: System::Void Start_Load(System::Object^ sender, System::EventArgs^ e) {
 		// Loop the background music infinitely when the form loads
-		PlaySound(TEXT("D:\\Programs\\repos\\BasuraHero\\BasuraHero\\ResourcesUsed\\gamebg2.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+		PlaySound(TEXT("ResourcesUsed\\journeybg.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
 	}
 
 	private: System::Void label2_Click(System::Object^ sender, System::EventArgs^ e) {
@@ -224,7 +224,7 @@ namespace BasuraHero {
 
 		// If user clicks Yes, play quit sound and exit
 		if (result == System::Windows::Forms::DialogResult::Yes) {
-			PlaySound(TEXT("D:\\Programs\\repos\\BasuraHero\\BasuraHero\\ResourcesUsed\\quitbg.wav"), NULL, SND_FILENAME | SND_SYNC);
+			PlaySound(TEXT("ResourcesUsed\\quitbg.wav"), NULL, SND_FILENAME | SND_SYNC);
 			Application::Exit();
 		}
 	}
