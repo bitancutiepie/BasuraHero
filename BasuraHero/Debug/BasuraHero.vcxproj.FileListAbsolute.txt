@@ -3,3 +3,4 @@ D:\Programs\repos\BasuraHero\BasuraHero\Debug\BasuraHero.vcxproj.ResolveComRefer
 D:\Programs\repos\BasuraHero\BasuraHero\Debug\BasuraHero.Start.resources
 D:\Programs\repos\BasuraHero\BasuraHero\Debug\BasuraHero.User.resources
 D:\Programs\repos\BasuraHero\BasuraHero\Debug\BasuraHero.vcxproj.GenerateResource.cache
+D:\Programs\repos\BasuraHero\BasuraHero\Debug\BasuraHero.Leaderboards.resources

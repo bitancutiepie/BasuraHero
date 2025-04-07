@@ -126,6 +126,7 @@ namespace BasuraHero {
 			this->Controls->Add(this->comboGender);
 			this->Controls->Add(this->txtUser);
 			this->DoubleBuffered = true;
+			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::None;
 			this->Name = L"User";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"User";

@@ -1,5 +1,6 @@
 #include "Start.h"
 #include "User.h"
+#include "Leaderboards.h"
 
 using namespace BasuraHero;
 
@@ -8,30 +9,46 @@ int main() {
     Application::EnableVisualStyles();
     Application::SetCompatibleTextRenderingDefault(false);
 
-    bool goToUser = true;
+    bool showApp = true;
 
-    while (goToUser) {
-        // Show Start form first
+    while (showApp) {
         Start^ startForm = gcnew Start();
 
-        // If Start returns OK, show User form
         if (startForm->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
-            User^ userForm = gcnew User();
-            if (userForm->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
-                // If User wants to switch back to Start
-                if (userForm->switchToStart) {
-                    goToUser = true;  // Go back to Start
+
+            if (startForm->switchToLeaderboard) {
+                Leaderboards^ lbForm = gcnew Leaderboards();
+
+                if (lbForm->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
+                    if (lbForm->switchToStart) {
+                        showApp = true; // Return to Start
+                    }
+                    else {
+                        showApp = false; // Close app if no return
+                    }
                 }
                 else {
-                    goToUser = false; // Exit the loop
+                    showApp = false;
                 }
             }
             else {
-                goToUser = false; // User canceled or closed, exit
+                User^ userForm = gcnew User();
+                if (userForm->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
+                    if (userForm->switchToStart) {
+                        showApp = true; // Return to Start
+                    }
+                    else {
+                        showApp = false;
+                    }
+                }
+                else {
+                    showApp = false;
+                }
             }
+
         }
         else {
-            goToUser = false; // Start was canceled or closed, exit
+            showApp = false;
         }
     }
 

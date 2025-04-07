@@ -3,6 +3,8 @@
 #include <Windows.h>
 #include <mmsystem.h>  // For PlaySound function
 #include "User.h"  // Make sure User.h is correctly included
+#include "Leaderboards.h"
+
 
 
 
@@ -107,6 +109,7 @@ namespace BasuraHero {
 			this->lblLB->Size = System::Drawing::Size(202, 32);
 			this->lblLB->TabIndex = 2;
 			this->lblLB->Text = L"LEADERBOARD";
+			this->lblLB->Click += gcnew System::EventHandler(this, &Start::lblLB_Click);
 			// 
 			// lblStart
 			// 
@@ -288,5 +291,15 @@ private: System::Void picHover2_MouseLeave(System::Object^ sender, System::Event
 
 private: System::Void picCreated_Click(System::Object^ sender, System::EventArgs^ e) {
 }
+
+public: bool switchToLeaderboard = false;
+
+private: System::Void lblLB_Click(System::Object^ sender, System::EventArgs^ e) {
+	PlaySound(NULL, NULL, SND_PURGE);
+	this->switchToLeaderboard = true;
+	this->DialogResult = System::Windows::Forms::DialogResult::OK;
+	this->Close();
+}
+
 };
 }
