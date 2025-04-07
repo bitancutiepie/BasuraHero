@@ -194,7 +194,6 @@ namespace BasuraHero {
 			this->Controls->Add(this->label2);
 			this->DoubleBuffered = true;
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::None;
-			this->MaximizeBox = false;
 			this->MinimizeBox = false;
 			this->Name = L"Start";
 			this->ShowIcon = false;
