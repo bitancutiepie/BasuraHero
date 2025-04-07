@@ -1,5 +1,10 @@
 #pragma once
 
+#include <Windows.h>
+#include <mmsystem.h>  
+#pragma comment(lib, "winmm.lib") 
+
+
 namespace BasuraHero {
 
 	using namespace System;
@@ -8,6 +13,8 @@ namespace BasuraHero {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	
+
 
 	/// <summary>
 	/// Summary for Leaderboards
@@ -38,6 +45,11 @@ namespace BasuraHero {
 
 	private: System::Windows::Forms::PictureBox^ pictureBox2;
 	private: System::Windows::Forms::PictureBox^ exitbtn;
+	private: System::Media::SoundPlayer^ lbSound;
+
+
+	
+
 
 
 	protected:
@@ -49,6 +61,9 @@ namespace BasuraHero {
 		/// Required designer variable.
 		/// </summary>
 		System::ComponentModel::Container ^components;
+
+	
+
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -103,9 +118,24 @@ namespace BasuraHero {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->exitbtn))->EndInit();
 			this->ResumeLayout(false);
+			this->Load += gcnew System::EventHandler(this, &Leaderboards::Leaderboards_Load);
+
 
 		}
 #pragma endregion
+
+	private: System::Void Leaderboards_Load(System::Object^ sender, System::EventArgs^ e) {
+		lbSound = gcnew System::Media::SoundPlayer("ResourcesUsed\\lbSound.wav");
+
+		try {
+			lbSound->Load();
+			lbSound->Play(); // Use PlayLooping() if you want it to play continuously
+		}
+		catch (Exception^ ex) {
+			MessageBox::Show("Sound failed to play: " + ex->Message);
+		}
+	}
+
 	
 	
 	public: bool switchToStart = false;

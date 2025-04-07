@@ -8,7 +8,6 @@
 
 
 
-
 #include <iostream>
 
 #pragma comment(lib, "winmm.lib")  // Link the winmm.lib library for PlaySound
@@ -22,6 +21,7 @@ namespace BasuraHero {
 	using namespace System::Data;
 	using namespace System::Drawing;
 	using namespace BasuraHero;
+
 
 // Then you can simply do this
 
