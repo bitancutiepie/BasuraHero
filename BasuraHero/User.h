@@ -54,8 +54,9 @@ namespace BasuraHero {
 	protected:
 
 
-	private: System::Windows::Forms::PictureBox^ lblMenu;
-	private: System::Windows::Forms::Label^ label1;
+
+	private: System::Windows::Forms::Label^ btnMenu;
+
 	protected:
 
 	private:
@@ -74,21 +75,19 @@ namespace BasuraHero {
 			System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(User::typeid));
 			this->txtUser = (gcnew System::Windows::Forms::TextBox());
 			this->comboGender = (gcnew System::Windows::Forms::ComboBox());
-			this->lblMenu = (gcnew System::Windows::Forms::PictureBox());
-			this->label1 = (gcnew System::Windows::Forms::Label());
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->lblMenu))->BeginInit();
+			this->btnMenu = (gcnew System::Windows::Forms::Label());
 			this->SuspendLayout();
 			// 
 			// txtUser
 			// 
-			this->txtUser->BackColor = System::Drawing::Color::Lime;
+			this->txtUser->BackColor = System::Drawing::Color::White;
 			this->txtUser->BorderStyle = System::Windows::Forms::BorderStyle::None;
 			this->txtUser->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 18, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->txtUser->Location = System::Drawing::Point(206, 326);
+			this->txtUser->Location = System::Drawing::Point(210, 326);
 			this->txtUser->Name = L"txtUser";
 			this->txtUser->ScrollBars = System::Windows::Forms::ScrollBars::Vertical;
-			this->txtUser->Size = System::Drawing::Size(205, 28);
+			this->txtUser->Size = System::Drawing::Size(193, 28);
 			this->txtUser->TabIndex = 0;
 			this->txtUser->TextChanged += gcnew System::EventHandler(this, &User::textBox1_TextChanged);
 			// 
@@ -104,27 +103,20 @@ namespace BasuraHero {
 			this->comboGender->TabIndex = 1;
 			this->comboGender->SelectedIndexChanged += gcnew System::EventHandler(this, &User::comboBox1_SelectedIndexChanged);
 			// 
-			// lblMenu
+			// btnMenu
 			// 
-			this->lblMenu->BackColor = System::Drawing::Color::Transparent;
-			this->lblMenu->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"lblMenu.BackgroundImage")));
-			this->lblMenu->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
-			this->lblMenu->Cursor = System::Windows::Forms::Cursors::Hand;
-			this->lblMenu->Location = System::Drawing::Point(440, 690);
-			this->lblMenu->Name = L"lblMenu";
-			this->lblMenu->Size = System::Drawing::Size(165, 84);
-			this->lblMenu->TabIndex = 2;
-			this->lblMenu->TabStop = false;
-			this->lblMenu->Click += gcnew System::EventHandler(this, &User::lblMenu_Click);
-			// 
-			// label1
-			// 
-			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(265, 714);
-			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(35, 13);
-			this->label1->TabIndex = 3;
-			this->label1->Text = L"label1";
+			this->btnMenu->AutoSize = true;
+			this->btnMenu->BackColor = System::Drawing::Color::Transparent;
+			this->btnMenu->Cursor = System::Windows::Forms::Cursors::Hand;
+			this->btnMenu->Font = (gcnew System::Drawing::Font(L"Impact", 24, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->btnMenu->ForeColor = System::Drawing::Color::White;
+			this->btnMenu->Location = System::Drawing::Point(276, 713);
+			this->btnMenu->Name = L"btnMenu";
+			this->btnMenu->Size = System::Drawing::Size(88, 39);
+			this->btnMenu->TabIndex = 3;
+			this->btnMenu->Text = L"MENU";
+			this->btnMenu->Click += gcnew System::EventHandler(this, &User::btnMenu_Click);
 			// 
 			// User
 			// 
@@ -133,8 +125,7 @@ namespace BasuraHero {
 			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->ClientSize = System::Drawing::Size(600, 800);
-			this->Controls->Add(this->label1);
-			this->Controls->Add(this->lblMenu);
+			this->Controls->Add(this->btnMenu);
 			this->Controls->Add(this->comboGender);
 			this->Controls->Add(this->txtUser);
 			this->DoubleBuffered = true;
@@ -143,7 +134,6 @@ namespace BasuraHero {
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"User";
 			this->Load += gcnew System::EventHandler(this, &User::User_Load);
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->lblMenu))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -154,7 +144,7 @@ namespace BasuraHero {
 	private: System::Void comboBox1_SelectedIndexChanged(System::Object^ sender, System::EventArgs^ e) {
 	}
 
-public: bool switchToStart = false;
+
 
 private: System::Void lblMenu_Click(System::Object^ sender, System::EventArgs^ e) {
 	this->switchToStart = true;
@@ -183,6 +173,14 @@ private: System::Void lblMenu_Click(System::Object^ sender, System::EventArgs^ e
 
 
 private: System::Void textBox1_TextChanged(System::Object^ sender, System::EventArgs^ e) {
+}
+
+	   public: bool switchToStart = false;
+
+private: System::Void btnMenu_Click(System::Object^ sender, System::EventArgs^ e) {
+	this->switchToStart = true;
+	this->DialogResult = System::Windows::Forms::DialogResult::OK;
+	this->Close();
 }
 };
 }
