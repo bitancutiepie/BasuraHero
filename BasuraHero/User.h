@@ -55,6 +55,7 @@ namespace BasuraHero {
 
 
 	private: System::Windows::Forms::PictureBox^ lblMenu;
+	private: System::Windows::Forms::Label^ label1;
 	protected:
 
 	private:
@@ -74,6 +75,7 @@ namespace BasuraHero {
 			this->txtUser = (gcnew System::Windows::Forms::TextBox());
 			this->comboGender = (gcnew System::Windows::Forms::ComboBox());
 			this->lblMenu = (gcnew System::Windows::Forms::PictureBox());
+			this->label1 = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->lblMenu))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -83,7 +85,7 @@ namespace BasuraHero {
 			this->txtUser->BorderStyle = System::Windows::Forms::BorderStyle::None;
 			this->txtUser->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 18, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->txtUser->Location = System::Drawing::Point(203, 360);
+			this->txtUser->Location = System::Drawing::Point(206, 326);
 			this->txtUser->Name = L"txtUser";
 			this->txtUser->ScrollBars = System::Windows::Forms::ScrollBars::Vertical;
 			this->txtUser->Size = System::Drawing::Size(205, 28);
@@ -96,7 +98,7 @@ namespace BasuraHero {
 				static_cast<System::Byte>(0)));
 			this->comboGender->FormattingEnabled = true;
 			this->comboGender->Items->AddRange(gcnew cli::array< System::Object^  >(2) { L"Male", L"Female" });
-			this->comboGender->Location = System::Drawing::Point(244, 599);
+			this->comboGender->Location = System::Drawing::Point(243, 554);
 			this->comboGender->Name = L"comboGender";
 			this->comboGender->Size = System::Drawing::Size(121, 33);
 			this->comboGender->TabIndex = 1;
@@ -115,6 +117,15 @@ namespace BasuraHero {
 			this->lblMenu->TabStop = false;
 			this->lblMenu->Click += gcnew System::EventHandler(this, &User::lblMenu_Click);
 			// 
+			// label1
+			// 
+			this->label1->AutoSize = true;
+			this->label1->Location = System::Drawing::Point(265, 714);
+			this->label1->Name = L"label1";
+			this->label1->Size = System::Drawing::Size(35, 13);
+			this->label1->TabIndex = 3;
+			this->label1->Text = L"label1";
+			// 
 			// User
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -122,6 +133,7 @@ namespace BasuraHero {
 			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->ClientSize = System::Drawing::Size(600, 800);
+			this->Controls->Add(this->label1);
 			this->Controls->Add(this->lblMenu);
 			this->Controls->Add(this->comboGender);
 			this->Controls->Add(this->txtUser);

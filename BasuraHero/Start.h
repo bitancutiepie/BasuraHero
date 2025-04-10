@@ -59,6 +59,9 @@ namespace BasuraHero {
 	private: System::Windows::Forms::PictureBox^ picCreated;
 	private: System::Windows::Forms::PictureBox^ picHover2;
 
+
+
+
 	protected:
 
 	private:
@@ -299,6 +302,7 @@ private: System::Void lblLB_Click(System::Object^ sender, System::EventArgs^ e) 
 	this->DialogResult = System::Windows::Forms::DialogResult::OK;
 	this->Close();
 }
+
 
 };
 }

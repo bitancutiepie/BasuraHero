@@ -48,6 +48,7 @@ namespace BasuraHero {
 	private: System::Media::SoundPlayer^ lbSound;
 
 
+
 	
 
 
@@ -115,11 +116,10 @@ namespace BasuraHero {
 			this->Name = L"Leaderboards";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"Leaderboards";
+			this->Load += gcnew System::EventHandler(this, &Leaderboards::Leaderboards_Load);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->exitbtn))->EndInit();
 			this->ResumeLayout(false);
-			this->Load += gcnew System::EventHandler(this, &Leaderboards::Leaderboards_Load);
-
 
 		}
 #pragma endregion
@@ -170,6 +170,8 @@ private: System::Void exitbtn_Click(System::Object^ sender, System::EventArgs^ e
 	);
 
 	Application::Exit();
+}
+private: System::Void tableLayoutPanel1_Paint(System::Object^ sender, System::Windows::Forms::PaintEventArgs^ e) {
 }
 };
 }
