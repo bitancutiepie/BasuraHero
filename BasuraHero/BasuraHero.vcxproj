@@ -121,12 +121,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FGame.cpp" />
+    <ClCompile Include="GameOver.cpp" />
     <ClCompile Include="Leaderboards.cpp" />
     <ClCompile Include="Start.cpp" />
     <ClCompile Include="User.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FGame.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="GameOver.h">
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="Leaderboards.h">
@@ -142,6 +146,9 @@
   <ItemGroup>
     <EmbeddedResource Include="FGame.resx">
       <DependentUpon>FGame.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GameOver.resx">
+      <DependentUpon>GameOver.h</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Leaderboards.resx">
       <DependentUpon>Leaderboards.h</DependentUpon>
