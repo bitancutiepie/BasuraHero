@@ -1,3 +1,4 @@
+  BasuraHero.FGame.resources - Embedded, ContainedInManifestFile, 
   BasuraHero.Leaderboards.resources - Embedded, ContainedInManifestFile, 
   BasuraHero.Start.resources - Embedded, ContainedInManifestFile, 
   BasuraHero.User.resources - Embedded, ContainedInManifestFile, 
@@ -24,6 +25,9 @@ Assembly Interop.WMPLauncher.1.0, Version=1.0.*, Culture=Invariant Language (Inv
 	hash=None, flags=None
 Assembly Interop.WMPDXMLib.1.0, Version=1.0.*, Culture=Invariant Language (Invariant Country): 
 	hash=None, flags=None
+Class BasuraHero.FGame: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
+  :System.Windows.Forms.Form
+    Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
 Class BasuraHero.Leaderboards: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
   :System.Windows.Forms.Form
     Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName

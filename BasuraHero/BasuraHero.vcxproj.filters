@@ -24,6 +24,9 @@
     <ClCompile Include="Leaderboards.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FGame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Start.h">
@@ -33,6 +36,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Leaderboards.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FGame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

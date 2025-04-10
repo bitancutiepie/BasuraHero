@@ -120,11 +120,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FGame.cpp" />
     <ClCompile Include="Leaderboards.cpp" />
     <ClCompile Include="Start.cpp" />
     <ClCompile Include="User.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FGame.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="Leaderboards.h">
       <FileType>CppForm</FileType>
     </ClInclude>
@@ -136,6 +140,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="FGame.resx">
+      <DependentUpon>FGame.h</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Leaderboards.resx">
       <DependentUpon>Leaderboards.h</DependentUpon>
     </EmbeddedResource>

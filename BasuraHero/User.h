@@ -8,6 +8,9 @@
 // This includes the User form class
 #include "User.h"
 #include "Start.h" 
+#include "FGame.h"
+
+
 namespace BasuraHero {
 
 	
@@ -16,7 +19,9 @@ namespace BasuraHero {
 	using namespace System::Collections;
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
-	using namespace System::Drawing;
+	using namespace System::Drawing;	
+	using namespace System::Data::SqlClient;
+
 
 	/// <summary>
 	/// Summary for User
@@ -58,6 +63,7 @@ namespace BasuraHero {
 	private: System::Windows::Forms::Label^ btnMenu;
 	private: System::Windows::Forms::PictureBox^ picF;
 	private: System::Windows::Forms::PictureBox^ picM;
+	private: System::Windows::Forms::Label^ lblConfirm;
 
 
 	protected:
@@ -81,6 +87,7 @@ namespace BasuraHero {
 			this->btnMenu = (gcnew System::Windows::Forms::Label());
 			this->picF = (gcnew System::Windows::Forms::PictureBox());
 			this->picM = (gcnew System::Windows::Forms::PictureBox());
+			this->lblConfirm = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->picF))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->picM))->BeginInit();
 			this->SuspendLayout();
@@ -149,6 +156,20 @@ namespace BasuraHero {
 			this->picM->TabStop = false;
 			this->picM->Click += gcnew System::EventHandler(this, &User::picM_Click);
 			// 
+			// lblConfirm
+			// 
+			this->lblConfirm->AutoSize = true;
+			this->lblConfirm->BackColor = System::Drawing::Color::Transparent;
+			this->lblConfirm->Font = (gcnew System::Drawing::Font(L"Britannic Bold", 21.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->lblConfirm->ForeColor = System::Drawing::Color::White;
+			this->lblConfirm->Location = System::Drawing::Point(278, 653);
+			this->lblConfirm->Name = L"lblConfirm";
+			this->lblConfirm->Size = System::Drawing::Size(77, 32);
+			this->lblConfirm->TabIndex = 6;
+			this->lblConfirm->Text = L"PLAY";
+			this->lblConfirm->Click += gcnew System::EventHandler(this, &User::lblConfirm_Click);
+			// 
 			// User
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -156,6 +177,7 @@ namespace BasuraHero {
 			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->ClientSize = System::Drawing::Size(600, 800);
+			this->Controls->Add(this->lblConfirm);
 			this->Controls->Add(this->picM);
 			this->Controls->Add(this->picF);
 			this->Controls->Add(this->btnMenu);
@@ -223,5 +245,60 @@ private: System::Void picF_Click(System::Object^ sender, System::EventArgs^ e) {
 private: System::Void picM_Click(System::Object^ sender, System::EventArgs^ e) {
 	this->comboGender->SelectedIndex = 0; // male
 }
+private: System::Void lblConfirm_Click(System::Object^ sender, System::EventArgs^ e) {
+	String^ username = txtUser->Text;    // Get the username from the textbox
+	String^ gender = comboGender->Text;  // Get the selected gender from the combobox
+
+	// Connection string - adjust to your local database
+	String^ connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;Initial Catalog=BasuraHeroDB;Integrated Security=True";  // Ensure your database name is correct
+
+	// SQL Query to check if the username already exists
+	String^ checkQuery = "SELECT COUNT(*) FROM UserData WHERE Username = @username";
+
+	// Create SQL connection and command for checking the username
+	SqlConnection^ connection = gcnew SqlConnection(connectionString);
+	SqlCommand^ checkCommand = gcnew SqlCommand(checkQuery, connection);
+	checkCommand->Parameters->AddWithValue("@username", username);
+
+	try {
+		connection->Open();  // Open the connection to the database
+
+		// Execute the check query
+		int userCount = (int)checkCommand->ExecuteScalar(); // Get the number of rows where username matches
+
+		// If username exists, show an error message
+		if (userCount > 0) {
+			MessageBox::Show("Username already exists! Please enter a new name.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		}
+		else {
+			// If username doesn't exist, proceed with the insert query
+			String^ query = "INSERT INTO UserData (Username, Gender) VALUES (@username, @gender)";
+			SqlCommand^ command = gcnew SqlCommand(query, connection);
+
+			// Add parameters to the command to prevent SQL injection
+			command->Parameters->AddWithValue("@username", username);
+			command->Parameters->AddWithValue("@gender", gender);
+
+			command->ExecuteNonQuery();  // Execute the insert query
+			MessageBox::Show("User saved successfully!");  // Notify the user of success
+
+			// After successful insertion, switch to FGame form
+			this->Hide();  // Hide current form (User form)
+			FGame^ gameForm = gcnew FGame();  // Create an instance of FGame form
+			gameForm->ShowDialog();  // Show the FGame form as a modal dialog
+			this->Close();  // Close current form (User form)
+		}
+	}
+	catch (Exception^ ex) {
+		MessageBox::Show("Error: " + ex->Message);  // Show error message if something goes wrong
+	}
+	finally {
+		connection->Close();  // Always close the connection after use
+	}
+}
+
+
+
+
 };
 }

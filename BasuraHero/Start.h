@@ -62,6 +62,7 @@ namespace BasuraHero {
 
 
 
+
 	protected:
 
 	private:
@@ -304,5 +305,7 @@ private: System::Void lblLB_Click(System::Object^ sender, System::EventArgs^ e) 
 }
 
 
+private: System::Void label1_Click_1(System::Object^ sender, System::EventArgs^ e) {
+}
 };
 }
