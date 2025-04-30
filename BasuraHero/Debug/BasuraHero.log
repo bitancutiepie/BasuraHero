@@ -1,7 +1,11 @@
-﻿  FGame.cpp
+﻿D:\Programs\VisualStudio\MSBuild\Current\Bin\amd64\Microsoft.Common.CurrentVersion.targets(3052,5): warning MSB3305: Processing COM reference "WMPLib.1.0" from path "C:\Windows\system32\wmp.dll". Type library importer encountered a property getter 'sessionPlaylistCount' on type 'WMPLib.IWMPNowPlayingHelperDispatch' without a valid return type.  The importer will attempt to import this property as a method instead.
+D:\Programs\VisualStudio\MSBuild\Current\Bin\amd64\Microsoft.Common.CurrentVersion.targets(3052,5): warning MSB3305: Processing COM reference "WMPLib.1.0" from path "C:\Windows\system32\wmp.dll". At least one of the arguments for 'IWMPGraphEventHandler.NotifyAcquireCredentials' cannot be marshaled by the runtime marshaler.  Such arguments will therefore be passed as a pointer and may require unsafe code to manipulate.
+  FGame.cpp
   GameOver.cpp
+  Leaderboards.cpp
   Start.cpp
   User.cpp
+  .NETFramework,Version=v4.7.2.AssemblyAttributes.cpp
   Generating Code...
   FGame.obj : MSIL module encountered; incremental linking is disabled for MSIL; performing full link
   BasuraHero.vcxproj -> D:\Programs\repos\BasuraHero\Debug\BasuraHero.exe

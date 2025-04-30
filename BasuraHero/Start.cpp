@@ -11,74 +11,31 @@ int main() {
     Application::SetCompatibleTextRenderingDefault(false);
 
     bool showApp = true;
+
     while (showApp) {
+        // Show Start form
         Start^ startForm = gcnew Start();
-        Application::DoEvents(); // Process any pending messages
-
-        if (startForm->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
-            if (startForm->switchToLeaderboard) {
-                // Show Leaderboards
-                Leaderboards^ lbForm = gcnew Leaderboards();
-                Application::DoEvents();
-
-                if (lbForm->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
-                    if (lbForm->switchToStart) {
-                        // Loop back to Start form
-                        continue;
-                    }
-                    else {
-                        showApp = false;
-                    }
-                }
-                else {
-                    showApp = false;
-                }
-            }
-            else {
-                // Show User form (gameplay)
-                User^ userForm = gcnew User();
-                Application::DoEvents();
-
-                if (userForm->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
-                    if (userForm->switchToStart) {
-                        // Loop back to Start form
-                        continue;
-                    }
-                    else {
-                        // Show GameOver form
-                        GameOver^ gameOverForm = gcnew GameOver();
-                        Application::DoEvents();
-
-                        // Debugging: Show message before displaying GameOver
-                        MessageBox::Show("Showing GameOver form");
-
-                        if (gameOverForm->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
-                            // Debugging: Show what happened after GameOver
-                            MessageBox::Show("GameOver form returned OK, switchToStart = " +
-                                gameOverForm->switchToStart.ToString());
-
-                            if (gameOverForm->switchToStart) {
-                                // Loop back to Start form
-                                continue;
-                            }
-                            else {
-                                showApp = false;
-                            }
-                        }
-                        else {
-                            // Debugging: Show what happened if not OK
-                            MessageBox::Show("GameOver form returned not OK");
-                            showApp = false;
-                        }
-                    }
-                }
-                else {
-                    showApp = false;
-                }
-            }
+        if (startForm->ShowDialog() != System::Windows::Forms::DialogResult::OK) {
+            break; // Exit if Start form is closed
         }
-        else {
-            showApp = false;
+
+        if (startForm->switchToLeaderboard) {
+            // Show Leaderboards form
+            Leaderboards^ lbForm = gcnew Leaderboards();
+            if (lbForm->ShowDialog() != System::Windows::Forms::DialogResult::OK || !lbForm->switchToStart) {
+                break; // Exit if Leaderboards form is closed or doesn't loop back
+            }
+            continue; // Loop back to Start form
+        }
+
+        // Show User form (gameplay)
+        User^ userForm = gcnew User();
+        if (userForm->ShowDialog() != System::Windows::Forms::DialogResult::OK || !userForm->switchToStart) {
+            // Show GameOver form if User form doesn't loop back
+            GameOver^ gameOverForm = gcnew GameOver();
+            if (gameOverForm->ShowDialog() != System::Windows::Forms::DialogResult::OK || !gameOverForm->switchToStart) {
+                break; // Exit if GameOver form is closed or doesn't loop back
+            }
         }
     }
 

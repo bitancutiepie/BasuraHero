@@ -32,7 +32,6 @@ namespace BasuraHero {
 		}
 	private: System::Windows::Forms::Label^ GO_menubtn;
 	protected:
-	protected:
 	private:
 		/// <summary>
 		/// Required designer variable.
@@ -78,22 +77,39 @@ namespace BasuraHero {
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"GameOver";
 			this->Load += gcnew System::EventHandler(this, &GameOver::GameOver_Load);
+			this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &GameOver::GameOver_KeyDown);
 			this->ResumeLayout(false);
 			this->PerformLayout();
 		}
 #pragma endregion
 	private: System::Void GameOver_Load(System::Object^ sender, System::EventArgs^ e) {
+		this->switchToStart = false;
+		this->KeyPreview = true; // Important for KeyDown events
+		this->Focus();
 	}
+
 	public: bool switchToStart = false;  // Public so it can be accessed in main
+
 	private: System::Void GO_menubtn_Click(System::Object^ sender, System::EventArgs^ e) {
+		MenuButtonAction();
+	}
+
+		   // Added function to handle the menu action
+	private: void MenuButtonAction() {
 		// Set switch flag
 		this->switchToStart = true;
-
 		// Set dialog result to OK
 		this->DialogResult = System::Windows::Forms::DialogResult::OK;
-
 		// Explicitly close the form - this is key!
 		this->Close();
+	}
+
+		   // Added keyboard handler for accessibility
+	private: System::Void GameOver_KeyDown(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e) {
+		// Allow pressing Enter or Escape to go to menu
+		if (e->KeyCode == Keys::Enter || e->KeyCode == Keys::Escape) {
+			MenuButtonAction();
+		}
 	}
 	};
 }
