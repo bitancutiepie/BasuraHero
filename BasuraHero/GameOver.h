@@ -34,6 +34,10 @@ namespace BasuraHero {
 				delete components;
 			}
 		}
+	private: System::Windows::Forms::Label^ GO_menubtn;
+	protected:
+
+	protected:
 
 	private:
 		/// <summary>
@@ -49,7 +53,23 @@ namespace BasuraHero {
 		void InitializeComponent(void)
 		{
 			System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(GameOver::typeid));
+			this->GO_menubtn = (gcnew System::Windows::Forms::Label());
 			this->SuspendLayout();
+			// 
+			// GO_menubtn
+			// 
+			this->GO_menubtn->AutoSize = true;
+			this->GO_menubtn->BackColor = System::Drawing::Color::Transparent;
+			this->GO_menubtn->Cursor = System::Windows::Forms::Cursors::Hand;
+			this->GO_menubtn->Font = (gcnew System::Drawing::Font(L"Britannic Bold", 27.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->GO_menubtn->ForeColor = System::Drawing::Color::Transparent;
+			this->GO_menubtn->Location = System::Drawing::Point(652, 483);
+			this->GO_menubtn->Name = L"GO_menubtn";
+			this->GO_menubtn->Size = System::Drawing::Size(105, 41);
+			this->GO_menubtn->TabIndex = 0;
+			this->GO_menubtn->Text = L"Menu";
+			this->GO_menubtn->Click += gcnew System::EventHandler(this, &GameOver::GO_menubtn_Click);
 			// 
 			// GameOver
 			// 
@@ -58,6 +78,7 @@ namespace BasuraHero {
 			this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
 			this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
 			this->ClientSize = System::Drawing::Size(800, 600);
+			this->Controls->Add(this->GO_menubtn);
 			this->DoubleBuffered = true;
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::None;
 			this->Name = L"GameOver";
@@ -65,10 +86,21 @@ namespace BasuraHero {
 			this->Text = L"GameOver";
 			this->Load += gcnew System::EventHandler(this, &GameOver::GameOver_Load);
 			this->ResumeLayout(false);
+			this->PerformLayout();
 
 		}
 #pragma endregion
 	private: System::Void GameOver_Load(System::Object^ sender, System::EventArgs^ e) {
+	}
+
+		   bool switchToStart = false;
+	private: System::Void GO_menubtn_Click(System::Object^ sender, System::EventArgs^ e) {
+		this->Hide();
+		this->switchToStart = true;
+		this->DialogResult = System::Windows::Forms::DialogResult::OK;
+		
+		
+
 	}
 	};
 }

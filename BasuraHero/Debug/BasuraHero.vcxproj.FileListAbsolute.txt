@@ -1,8 +1,8 @@
 D:\Programs\repos\BasuraHero\BasuraHero\Debug\BasuraHero.vcxproj.AssemblyReference.cache
 D:\Programs\repos\BasuraHero\BasuraHero\Debug\BasuraHero.vcxproj.ResolveComReference.cache
+D:\Programs\repos\BasuraHero\BasuraHero\Debug\BasuraHero.FGame.resources
+D:\Programs\repos\BasuraHero\BasuraHero\Debug\BasuraHero.GameOver.resources
 D:\Programs\repos\BasuraHero\BasuraHero\Debug\BasuraHero.Leaderboards.resources
 D:\Programs\repos\BasuraHero\BasuraHero\Debug\BasuraHero.Start.resources
 D:\Programs\repos\BasuraHero\BasuraHero\Debug\BasuraHero.User.resources
 D:\Programs\repos\BasuraHero\BasuraHero\Debug\BasuraHero.vcxproj.GenerateResource.cache
-D:\Programs\repos\BasuraHero\BasuraHero\Debug\BasuraHero.FGame.resources
-D:\Programs\repos\BasuraHero\BasuraHero\Debug\BasuraHero.GameOver.resources
