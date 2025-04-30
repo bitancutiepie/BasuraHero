@@ -29,6 +29,8 @@ Assembly Interop.WMPDXMLib.1.0, Version=1.0.*, Culture=Invariant Language (Invar
 Class BasuraHero.GameOver: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
   :System.Windows.Forms.Form
     Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName
+  Fields:
+    Boolean switchToStart : Public
 Class BasuraHero.FGame: AutoLayout, AnsiClass, Class, Public, BeforeFieldInit
   :System.Windows.Forms.Form
     Void .ctor(): PrivateScope, Public, HideBySig, SpecialName, RTSpecialName

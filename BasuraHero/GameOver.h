@@ -1,14 +1,11 @@
 #pragma once
-
 namespace BasuraHero {
-
 	using namespace System;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
-
 	/// <summary>
 	/// Summary for GameOver
 	/// </summary>
@@ -22,7 +19,6 @@ namespace BasuraHero {
 			//TODO: Add the constructor code here
 			//
 		}
-
 	protected:
 		/// <summary>
 		/// Clean up any resources being used.
@@ -36,15 +32,12 @@ namespace BasuraHero {
 		}
 	private: System::Windows::Forms::Label^ GO_menubtn;
 	protected:
-
 	protected:
-
 	private:
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		System::ComponentModel::Container ^components;
-
+		System::ComponentModel::Container^ components;
 #pragma region Windows Form Designer generated code
 		/// <summary>
 		/// Required method for Designer support - do not modify
@@ -87,20 +80,20 @@ namespace BasuraHero {
 			this->Load += gcnew System::EventHandler(this, &GameOver::GameOver_Load);
 			this->ResumeLayout(false);
 			this->PerformLayout();
-
 		}
 #pragma endregion
 	private: System::Void GameOver_Load(System::Object^ sender, System::EventArgs^ e) {
 	}
-
-		   bool switchToStart = false;
+	public: bool switchToStart = false;  // Public so it can be accessed in main
 	private: System::Void GO_menubtn_Click(System::Object^ sender, System::EventArgs^ e) {
-		this->Hide();
+		// Set switch flag
 		this->switchToStart = true;
-		this->DialogResult = System::Windows::Forms::DialogResult::OK;
-		
-		
 
+		// Set dialog result to OK
+		this->DialogResult = System::Windows::Forms::DialogResult::OK;
+
+		// Explicitly close the form - this is key!
+		this->Close();
 	}
 	};
 }
