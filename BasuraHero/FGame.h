@@ -31,14 +31,28 @@ namespace BasuraHero {
             spawnTimer->Interval = 1500;
             spawnTimer->Tick += gcnew System::EventHandler(this, &FGame::spawnTimer_Tick);
 
+            // Setup powerup timers
+            scoreMultiplierTimer = gcnew System::Windows::Forms::Timer();
+            scoreMultiplierTimer->Interval = 5000; // 5 seconds
+            scoreMultiplierTimer->Tick += gcnew System::EventHandler(this, &FGame::scoreMultiplierTimer_Tick);
+
+            slowDownTimer = gcnew System::Windows::Forms::Timer();
+            slowDownTimer->Interval = 5000; // 5 seconds
+            slowDownTimer->Tick += gcnew System::EventHandler(this, &FGame::slowDownTimer_Tick);
+
             // Initialize cursor-related variables
             activeBin = BinType::None;
 
             // Initialize score
             playerScore = 0;
+            scoreMultiplier = 1;
 
             // Initialize lives
             playerLives = 3;
+
+            // Save original fall speed
+            originalFallSpeed = 5;
+            currentFallSpeed = originalFallSpeed;
         }
 
     protected:
@@ -57,6 +71,8 @@ namespace BasuraHero {
         System::Windows::Forms::Timer^ countdownTimer;
         System::Windows::Forms::Timer^ fallTimer;
         System::Windows::Forms::Timer^ spawnTimer;
+        System::Windows::Forms::Timer^ scoreMultiplierTimer;
+        System::Windows::Forms::Timer^ slowDownTimer;
     private: System::Windows::Forms::PictureBox^ bio;
     private: System::Windows::Forms::PictureBox^ nonbio;
     private: System::Windows::Forms::PictureBox^ recyclable;
@@ -73,10 +89,75 @@ namespace BasuraHero {
                Recyclable
            };
 
+           // Enum to track special items
+           enum class SpecialItemType {
+               None,
+               ScoreMultiplier,
+               SlowDown,
+               Bomb
+           };
+
            BinType activeBin;
            int gameTime;
            int playerScore; // Player's score
            int playerLives; // Player's lives
+           int scoreMultiplier; // Score multiplier for powerup
+           int originalFallSpeed; // Original fall speed
+    private: System::Windows::Forms::Label^ binTxt;
+    private: System::Windows::Forms::Label^ powerTxt;
+           int currentFallSpeed; // Current fall speed
+
+           void UpdateBinText()
+           {
+               switch (activeBin)
+               {
+               case BinType::Bio:
+                   binTxt->Text = "BIO";
+                   binTxt->ForeColor = System::Drawing::Color::LightGreen;
+                   break;
+               case BinType::NonBio:
+                   binTxt->Text = "NONBIO";
+                   binTxt->ForeColor = System::Drawing::Color::LightBlue;
+                   break;
+               case BinType::Recyclable:
+                   binTxt->Text = "RECYCLABLE";
+                   binTxt->ForeColor = System::Drawing::Color::Yellow;
+                   break;
+               default:
+                   binTxt->Text = "NONE";
+                   binTxt->ForeColor = System::Drawing::Color::White;
+                   break;
+               }
+           }
+
+           // Function to update powerTxt based on active powerups
+           void UpdatePowerupText()
+           {
+               bool hasPowerup = false;
+
+               // Check for active score multiplier
+               if (scoreMultiplier > 1)
+               {
+                   powerTxt->Text = "X2 SCORE";
+                   powerTxt->ForeColor = System::Drawing::Color::Yellow;
+                   hasPowerup = true;
+               }
+
+               // Check for active slow down
+               if (currentFallSpeed < originalFallSpeed)
+               {
+                   powerTxt->Text = "SLOWED";
+                   powerTxt->ForeColor = System::Drawing::Color::Cyan;
+                   hasPowerup = true;
+               }
+
+               // If no powerups are active
+               if (!hasPowerup)
+               {
+                   powerTxt->Text = "NONE";
+                   powerTxt->ForeColor = System::Drawing::Color::White;
+               }
+           }
 
            void ShowGameOver()
            {
@@ -111,32 +192,49 @@ namespace BasuraHero {
                heart3->Visible = (playerLives >= 3);
            }
 
-           // Helper function to set custom cursor
-           void SetCustomCursor(PictureBox^ pb)
+           // Helper function to set custom cursor based on bin type
+           void SetCustomCursor(BinType binType)
            {
                try {
-                   // Clone the background image from the PictureBox
-                   if (pb->BackgroundImage != nullptr) {
-                       Bitmap^ originalBmp = dynamic_cast<Bitmap^>(pb->BackgroundImage->Clone());
+                   String^ cursorPath = "D:\\Programs\\repos\\BasuraHero\\BasuraHero\\ResourcesUsed\\GarbageIcons\\";
 
-                       // Resize the bitmap to appropriate cursor size
-                       Bitmap^ cursorBmp = gcnew Bitmap(originalBmp, 32, 32);
-
-                       // Define hotspot (center of the image)
-                       System::Drawing::Point hotspot(16, 16);
-
-                       // Create cursor from bitmap
-                       IntPtr hIcon = cursorBmp->GetHicon();
-                       System::Windows::Forms::Cursor^ customCursor = gcnew System::Windows::Forms::Cursor(hIcon);
-
-                       // Set the form's cursor
-                       this->Cursor = customCursor;
-
-                       // Clean up
-                       DestroyIcon(hIcon);
-                       delete originalBmp;
-                       delete cursorBmp;
+                   // Set the correct cursor file based on bin type
+                   switch (binType) {
+                   case BinType::Bio:
+                       cursorPath += "bioCur.png";
+                       break;
+                   case BinType::NonBio:
+                       cursorPath += "nonbioCur.png";
+                       break;
+                   case BinType::Recyclable:
+                       cursorPath += "recyCur.png";
+                       break;
+                   default:
+                       // Reset to default cursor if None
+                       this->Cursor = System::Windows::Forms::Cursors::Default;
+                       return;
                    }
+
+                   // Load image from file
+                   Bitmap^ originalBmp = gcnew Bitmap(cursorPath);
+
+                   // Resize the bitmap to larger cursor size (64x64)
+                   Bitmap^ cursorBmp = gcnew Bitmap(originalBmp, 64, 64);
+
+                   // Define hotspot (center of the image)
+                   System::Drawing::Point hotspot(32, 32);
+
+                   // Create cursor from bitmap
+                   IntPtr hIcon = cursorBmp->GetHicon();
+                   System::Windows::Forms::Cursor^ customCursor = gcnew System::Windows::Forms::Cursor(hIcon);
+
+                   // Set the form's cursor
+                   this->Cursor = customCursor;
+
+                   // Clean up
+                   DestroyIcon(hIcon);
+                   delete originalBmp;
+                   delete cursorBmp;
                }
                catch (Exception^ ex) {
                    MessageBox::Show("Error creating custom cursor: " + ex->Message);
@@ -148,6 +246,78 @@ namespace BasuraHero {
            {
                // Format the score with leading zeros
                scorelbl->Text = playerScore.ToString("00000");
+
+               // If score multiplier is active, change the color to yellow
+               if (scoreMultiplier > 1) {
+                   scorelbl->ForeColor = System::Drawing::Color::Yellow;
+               }
+               else {
+                   scorelbl->ForeColor = System::Drawing::SystemColors::ControlLightLight;
+               }
+           }
+
+           // Handle score multiplier timer tick (ends the multiplier effect)
+           void scoreMultiplierTimer_Tick(System::Object^ sender, System::EventArgs^ e)
+           {
+               scoreMultiplierTimer->Stop();
+               scoreMultiplier = 1; // Reset multiplier
+               UpdateScoreDisplay(); // Reset color
+               UpdatePowerupText(); // Update powerup text
+           }
+
+           // Handle slow down timer tick (ends the slow down effect)
+           void slowDownTimer_Tick(System::Object^ sender, System::EventArgs^ e)
+           {
+               slowDownTimer->Stop();
+               currentFallSpeed = originalFallSpeed; // Reset fall speed
+               UpdatePowerupText(); // Update powerup text
+           }
+
+           // Helper function to determine special item type from tag
+           SpecialItemType GetSpecialItemType(String^ tag)
+           {
+               if (tag->Contains("multiplier"))
+                   return SpecialItemType::ScoreMultiplier;
+               else if (tag->Contains("slowdown"))
+                   return SpecialItemType::SlowDown;
+               else if (tag->Contains("bomb"))
+                   return SpecialItemType::Bomb;
+
+               return SpecialItemType::None;
+           }
+
+           // Method to handle powerup effects
+           void ApplyPowerUp(SpecialItemType powerupType)
+           {
+               switch (powerupType)
+               {
+               case SpecialItemType::ScoreMultiplier:
+                   // Double score multiplier
+                   scoreMultiplier = 2;
+                   // Update score display for visual feedback
+                   UpdateScoreDisplay();
+                   // Reset any active multiplier timer
+                   scoreMultiplierTimer->Stop();
+                   // Start the multiplier countdown
+                   scoreMultiplierTimer->Start();
+                   UpdatePowerupText(); // Update powerup text
+                   break;
+
+               case SpecialItemType::SlowDown:
+                   // Slow down falling objects
+                   currentFallSpeed = originalFallSpeed / 2;
+                   // Reset any active slow down timer
+                   slowDownTimer->Stop();
+                   // Start the slow down countdown
+                   slowDownTimer->Start();
+                   UpdatePowerupText(); // Update powerup text
+                   break;
+
+               case SpecialItemType::Bomb:
+                   // Bomb reduces player's lives
+                   LoseLife();
+                   break;
+               }
            }
 
            // Helper function to determine garbage type from file index
@@ -180,6 +350,8 @@ namespace BasuraHero {
                this->heart1 = (gcnew System::Windows::Forms::PictureBox());
                this->heart2 = (gcnew System::Windows::Forms::PictureBox());
                this->heart3 = (gcnew System::Windows::Forms::PictureBox());
+               this->binTxt = (gcnew System::Windows::Forms::Label());
+               this->powerTxt = (gcnew System::Windows::Forms::Label());
                (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->bio))->BeginInit();
                (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->nonbio))->BeginInit();
                (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->recyclable))->BeginInit();
@@ -264,7 +436,7 @@ namespace BasuraHero {
                this->heart1->BackColor = System::Drawing::Color::Transparent;
                this->heart1->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"heart1.BackgroundImage")));
                this->heart1->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
-               this->heart1->Location = System::Drawing::Point(1137, 60);
+               this->heart1->Location = System::Drawing::Point(1097, 98);
                this->heart1->Name = L"heart1";
                this->heart1->Size = System::Drawing::Size(40, 40);
                this->heart1->TabIndex = 6;
@@ -275,7 +447,7 @@ namespace BasuraHero {
                this->heart2->BackColor = System::Drawing::Color::Transparent;
                this->heart2->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"heart2.BackgroundImage")));
                this->heart2->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
-               this->heart2->Location = System::Drawing::Point(1182, 60);
+               this->heart2->Location = System::Drawing::Point(1142, 98);
                this->heart2->Name = L"heart2";
                this->heart2->Size = System::Drawing::Size(40, 40);
                this->heart2->TabIndex = 7;
@@ -286,11 +458,38 @@ namespace BasuraHero {
                this->heart3->BackColor = System::Drawing::Color::Transparent;
                this->heart3->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"heart3.BackgroundImage")));
                this->heart3->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
-               this->heart3->Location = System::Drawing::Point(1228, 60);
+               this->heart3->Location = System::Drawing::Point(1188, 98);
                this->heart3->Name = L"heart3";
                this->heart3->Size = System::Drawing::Size(40, 40);
                this->heart3->TabIndex = 8;
                this->heart3->TabStop = false;
+               // 
+               // binTxt
+               // 
+               this->binTxt->AutoSize = true;
+               this->binTxt->BackColor = System::Drawing::Color::Transparent;
+               this->binTxt->Font = (gcnew System::Drawing::Font(L"Franklin Gothic Medium Cond", 24, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+                   static_cast<System::Byte>(0)));
+               this->binTxt->ForeColor = System::Drawing::Color::White;
+               this->binTxt->Location = System::Drawing::Point(144, 95);
+               this->binTxt->Name = L"binTxt";
+               this->binTxt->Size = System::Drawing::Size(86, 37);
+               this->binTxt->TabIndex = 9;
+               this->binTxt->Text = L"NONE";
+               this->binTxt->Click += gcnew System::EventHandler(this, &FGame::binTxt_Click);
+               // 
+               // powerTxt
+               // 
+               this->powerTxt->AutoSize = true;
+               this->powerTxt->BackColor = System::Drawing::Color::Transparent;
+               this->powerTxt->Font = (gcnew System::Drawing::Font(L"Franklin Gothic Medium Cond", 24, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+                   static_cast<System::Byte>(0)));
+               this->powerTxt->ForeColor = System::Drawing::Color::White;
+               this->powerTxt->Location = System::Drawing::Point(663, 95);
+               this->powerTxt->Name = L"powerTxt";
+               this->powerTxt->Size = System::Drawing::Size(86, 37);
+               this->powerTxt->TabIndex = 10;
+               this->powerTxt->Text = L"NONE";
                // 
                // FGame
                // 
@@ -299,6 +498,8 @@ namespace BasuraHero {
                this->BackgroundImage = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"$this.BackgroundImage")));
                this->BackgroundImageLayout = System::Windows::Forms::ImageLayout::Stretch;
                this->ClientSize = System::Drawing::Size(1280, 720);
+               this->Controls->Add(this->powerTxt);
+               this->Controls->Add(this->binTxt);
                this->Controls->Add(this->heart3);
                this->Controls->Add(this->heart2);
                this->Controls->Add(this->heart1);
@@ -343,40 +544,48 @@ namespace BasuraHero {
 
         // Initialize hearts display
         UpdateHeartDisplay();
+
+        // Initialize bin and powerup text displays
+        UpdateBinText();
+        UpdatePowerupText();
     }
 
-    private: System::Void FGame_KeyDown(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e)
-    {
-        switch (e->KeyCode)
-        {
-        case Keys::D1:  // Number 1 key
-        case Keys::NumPad1:  // Numpad 1 key
-            // Select Bio bin
-            SetCustomCursor(bio);
-            activeBin = BinType::Bio;
-            break;
+   private: System::Void FGame_KeyDown(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e)
+   {
+       switch (e->KeyCode)
+       {
+       case Keys::D1:  // Number 1 key
+       case Keys::NumPad1:  // Numpad 1 key
+           // Select Bio bin
+           SetCustomCursor(BinType::Bio);
+           activeBin = BinType::Bio;
+           UpdateBinText(); // Update bin text label
+           break;
 
-        case Keys::D2:  // Number 2 key
-        case Keys::NumPad2:  // Numpad 2 key
-            // Select NonBio bin
-            SetCustomCursor(nonbio);
-            activeBin = BinType::NonBio;
-            break;
+       case Keys::D2:  // Number 2 key
+       case Keys::NumPad2:  // Numpad 2 key
+           // Select NonBio bin
+           SetCustomCursor(BinType::NonBio);
+           activeBin = BinType::NonBio;
+           UpdateBinText(); // Update bin text label
+           break;
 
-        case Keys::D3:  // Number 3 key
-        case Keys::NumPad3:  // Numpad 3 key
-            // Select Recyclable bin
-            SetCustomCursor(recyclable);
-            activeBin = BinType::Recyclable;
-            break;
+       case Keys::D3:  // Number 3 key
+       case Keys::NumPad3:  // Numpad 3 key
+           // Select Recyclable bin
+           SetCustomCursor(BinType::Recyclable);
+           activeBin = BinType::Recyclable;
+           UpdateBinText(); // Update bin text label
+           break;
 
-        case Keys::Escape:  // Escape key
-            // Reset cursor to default
-            this->Cursor = System::Windows::Forms::Cursors::Default;
-            activeBin = BinType::None;
-            break;
-        }
-    }
+       case Keys::Escape:  // Escape key
+           // Reset cursor to default
+           this->Cursor = System::Windows::Forms::Cursors::Default;
+           activeBin = BinType::None;
+           UpdateBinText(); // Update bin text label
+           break;
+       }
+   }
 
     private: System::Void countdownTimer_Tick(System::Object^ sender, System::EventArgs^ e)
     {
@@ -396,22 +605,31 @@ namespace BasuraHero {
     {
         for each(Control ^ ctrl in this->Controls)
         {
-            if (ctrl->Tag != nullptr && ctrl->Tag->ToString()->StartsWith("falling"))
+            // FIXED: Check for both falling garbage AND special items
+            if (ctrl->Tag != nullptr && (ctrl->Tag->ToString()->StartsWith("falling") || ctrl->Tag->ToString()->StartsWith("special")))
             {
                 PictureBox^ garbageItem = dynamic_cast<PictureBox^>(ctrl);
 
                 if (garbageItem != nullptr) {
-                    // Move the garbage item down
-                    garbageItem->Top += 5;
+                    // Move the garbage item down using the current fall speed
+                    garbageItem->Top += currentFallSpeed;
 
                     // Check if garbage is out of bounds
                     if (garbageItem->Top > this->Height)
                     {
-                        // FIXED: Lose a life when trash falls out of bounds
-                        LoseLife();
+                        // Check if the item is a bomb
+                        if (ctrl->Tag->ToString()->Contains("bomb")) {
+                            // For bombs, just remove them without deducting lives
+                            this->Controls->Remove(garbageItem);
+                            delete garbageItem;
+                        }
+                        else {
+                            // For regular items, lose a life when they fall out of bounds
+                            LoseLife();
 
-                        this->Controls->Remove(garbageItem);
-                        delete garbageItem;
+                            this->Controls->Remove(garbageItem);
+                            delete garbageItem;
+                        }
                         break;
                     }
                 }
@@ -427,9 +645,31 @@ namespace BasuraHero {
            void SpawnGarbage()
            {
                Random^ rand = gcnew Random();
-               int randomIndex = rand->Next(1, 10); // Generate random index for the image
+               int randomIndex = rand->Next(1, 13); // 1-9 for regular garbage, 10 for multiplier, 11 for slowdown, 12 for bomb
                String^ folderPath = "ResourcesUsed\\GarbageIcons\\";
-               String^ imagePath = folderPath + randomIndex.ToString() + ".png"; // Construct image path
+               String^ imagePath;
+               String^ itemTag;
+
+               if (randomIndex == 10) {
+                   // Score multiplier powerup
+                   imagePath = folderPath + "up1.png";
+                   itemTag = "special:multiplier";
+               }
+               else if (randomIndex == 11) {
+                   // Slow down powerup
+                   imagePath = folderPath + "up2.png";
+                   itemTag = "special:slowdown";
+               }
+               else if (randomIndex == 12) {
+                   // Bomb
+                   imagePath = folderPath + "bomb1.png";
+                   itemTag = "special:bomb";
+               }
+               else {
+                   // Regular garbage
+                   imagePath = folderPath + randomIndex.ToString() + ".png";
+                   itemTag = "falling:" + randomIndex.ToString();
+               }
 
                PictureBox^ garbage = gcnew PictureBox();
                garbage->Size = System::Drawing::Size(75, 75);
@@ -445,7 +685,7 @@ namespace BasuraHero {
                }
 
                garbage->Location = Point(rand->Next(0, this->Width - 50), 0);
-               garbage->Tag = "falling:" + randomIndex.ToString(); // Include the image index in the tag
+               garbage->Tag = itemTag; // Include the item type in the tag
 
                // Add click event handler to the garbage item
                garbage->Click += gcnew System::EventHandler(this, &FGame::garbage_Click);
@@ -457,36 +697,45 @@ namespace BasuraHero {
            // Event handler for garbage item clicks
            void garbage_Click(System::Object^ sender, System::EventArgs^ e)
            {
-               // Check if a bin is selected
-               if (activeBin == BinType::None)
-                   return;
-
                PictureBox^ garbageItem = dynamic_cast<PictureBox^>(sender);
                if (garbageItem != nullptr && garbageItem->Tag != nullptr)
                {
-                   // Extract the garbage type index from the tag
                    String^ tag = garbageItem->Tag->ToString();
-                   if (tag->Contains(":")) {
-                       int garbageIndex = Int32::Parse(tag->Split(':')[1]);
-                       BinType garbageType = GetGarbageType(garbageIndex);
 
-                       // Check if correct bin is selected
-                       if (activeBin == garbageType) {
-                           // Correct bin - award points
-                           playerScore += 10;
-                           UpdateScoreDisplay();
-                       }
-                       else {
-                           // FIXED: Wrong bin - lose a life
-                           LoseLife();
+                   // Handle special items (power-ups and bomb)
+                   if (tag->StartsWith("special")) {
+                       SpecialItemType specialType = GetSpecialItemType(tag);
+                       ApplyPowerUp(specialType);
+                   }
+                   // Handle regular garbage
+                   else if (tag->StartsWith("falling")) {
+                       // Check if a bin is selected
+                       if (activeBin == BinType::None)
+                           return;
 
-                           // Wrong bin - subtract points
-                           playerScore = Math::Max(0, playerScore - 5); // Ensure score doesn't go below 0
-                           UpdateScoreDisplay();
+                       // Extract the garbage type index from the tag
+                       if (tag->Contains(":")) {
+                           int garbageIndex = Int32::Parse(tag->Split(':')[1]);
+                           BinType garbageType = GetGarbageType(garbageIndex);
+
+                           // Check if correct bin is selected
+                           if (activeBin == garbageType) {
+                               // Correct bin - award points (with multiplier if active)
+                               playerScore += 10 * scoreMultiplier;
+                               UpdateScoreDisplay();
+                           }
+                           else {
+                               // Wrong bin - lose a life
+                               LoseLife();
+
+                               // Wrong bin - subtract points
+                               playerScore = Math::Max(0, playerScore - 5); // Ensure score doesn't go below 0
+                               UpdateScoreDisplay();
+                           }
                        }
                    }
 
-                   // Remove the garbage item
+                   // Remove the item
                    this->Controls->Remove(garbageItem);
                    delete garbageItem;
                }
@@ -501,37 +750,42 @@ namespace BasuraHero {
         }
         else {
             // Set bio cursor
-            SetCustomCursor(bio);
+            SetCustomCursor(BinType::Bio);
             activeBin = BinType::Bio;
         }
+        UpdateBinText(); // Update bin text label
     }
 
-    private: System::Void nonbio_Click(System::Object^ sender, System::EventArgs^ e) {
-        // Toggle nonbio bin selection
-        if (activeBin == BinType::NonBio) {
-            // If already selected, reset cursor
-            this->Cursor = System::Windows::Forms::Cursors::Default;
-            activeBin = BinType::None;
-        }
-        else {
-            // Set nonbio cursor
-            SetCustomCursor(nonbio);
-            activeBin = BinType::NonBio;
-        }
+private: System::Void nonbio_Click(System::Object^ sender, System::EventArgs^ e) {
+    // Toggle nonbio bin selection
+    if (activeBin == BinType::NonBio) {
+        // If already selected, reset cursor
+        this->Cursor = System::Windows::Forms::Cursors::Default;
+        activeBin = BinType::None;
     }
+    else {
+        // Set nonbio cursor
+        SetCustomCursor(BinType::NonBio);
+        activeBin = BinType::NonBio;
+    }
+    UpdateBinText(); // Update bin text label
+}
 
-    private: System::Void recyclable_Click(System::Object^ sender, System::EventArgs^ e) {
-        // Toggle recyclable bin selection
-        if (activeBin == BinType::Recyclable) {
-            // If already selected, reset cursor
-            this->Cursor = System::Windows::Forms::Cursors::Default;
-            activeBin = BinType::None;
-        }
-        else {
-            // Set recyclable cursor
-            SetCustomCursor(recyclable);
-            activeBin = BinType::Recyclable;
-        }
+private: System::Void recyclable_Click(System::Object^ sender, System::EventArgs^ e) {
+    // Toggle recyclable bin selection
+    if (activeBin == BinType::Recyclable) {
+        // If already selected, reset cursor
+        this->Cursor = System::Windows::Forms::Cursors::Default;
+        activeBin = BinType::None;
     }
-    };
+    else {
+        // Set recyclable cursor
+        SetCustomCursor(BinType::Recyclable);
+        activeBin = BinType::Recyclable;
+    }
+    UpdateBinText(); // Update bin text label
+}
+    private: System::Void binTxt_Click(System::Object^ sender, System::EventArgs^ e) {
+    }
+};
 }
