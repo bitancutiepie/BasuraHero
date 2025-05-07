@@ -17,7 +17,7 @@ namespace BasuraHero {
         {
             InitializeComponent();
 
-            // Setup timers
+           
             gameTime = 60;
             countdownTimer = gcnew System::Windows::Forms::Timer();
             countdownTimer->Interval = 1000;
@@ -31,7 +31,7 @@ namespace BasuraHero {
             spawnTimer->Interval = 1500;
             spawnTimer->Tick += gcnew System::EventHandler(this, &FGame::spawnTimer_Tick);
 
-            // Setup powerup timers
+          
             scoreMultiplierTimer = gcnew System::Windows::Forms::Timer();
             scoreMultiplierTimer->Interval = 5000; // 5 seconds
             scoreMultiplierTimer->Tick += gcnew System::EventHandler(this, &FGame::scoreMultiplierTimer_Tick);
@@ -51,7 +51,7 @@ namespace BasuraHero {
             playerLives = 3;
 
             // Save original fall speed
-            originalFallSpeed = 5;
+            originalFallSpeed = 10;
             currentFallSpeed = originalFallSpeed;
         }
 
@@ -105,6 +105,7 @@ namespace BasuraHero {
            int originalFallSpeed; // Original fall speed
     private: System::Windows::Forms::Label^ binTxt;
     private: System::Windows::Forms::Label^ powerTxt;
+
            int currentFallSpeed; // Current fall speed
 
            void UpdateBinText()
@@ -130,12 +131,12 @@ namespace BasuraHero {
                }
            }
 
-           // Function to update powerTxt based on active powerups
+           
            void UpdatePowerupText()
            {
                bool hasPowerup = false;
 
-               // Check for active score multiplier
+              
                if (scoreMultiplier > 1)
                {
                    powerTxt->Text = "X2 SCORE";
@@ -143,7 +144,7 @@ namespace BasuraHero {
                    hasPowerup = true;
                }
 
-               // Check for active slow down
+               
                if (currentFallSpeed < originalFallSpeed)
                {
                    powerTxt->Text = "SLOWED";
@@ -151,7 +152,7 @@ namespace BasuraHero {
                    hasPowerup = true;
                }
 
-               // If no powerups are active
+               
                if (!hasPowerup)
                {
                    powerTxt->Text = "NONE";
@@ -166,15 +167,15 @@ namespace BasuraHero {
                gameOverForm->ShowDialog();
            }
 
-           // Function to handle losing a life
+           
            void LoseLife()
            {
                playerLives--;
 
-               // Update heart visibility based on remaining lives
+              
                UpdateHeartDisplay();
 
-               // Check if game over
+              
                if (playerLives <= 0) {
                    countdownTimer->Stop();
                    fallTimer->Stop();
@@ -183,7 +184,7 @@ namespace BasuraHero {
                }
            }
 
-           // Function to update heart display based on remaining lives
+          
            void UpdateHeartDisplay()
            {
                // Hide hearts based on remaining lives
@@ -192,13 +193,13 @@ namespace BasuraHero {
                heart3->Visible = (playerLives >= 3);
            }
 
-           // Helper function to set custom cursor based on bin type
+           
            void SetCustomCursor(BinType binType)
            {
                try {
                    String^ cursorPath = "D:\\Programs\\repos\\BasuraHero\\BasuraHero\\ResourcesUsed\\GarbageIcons\\";
 
-                   // Set the correct cursor file based on bin type
+                   
                    switch (binType) {
                    case BinType::Bio:
                        cursorPath += "bioCur.png";
@@ -215,23 +216,23 @@ namespace BasuraHero {
                        return;
                    }
 
-                   // Load image from file
+                  
                    Bitmap^ originalBmp = gcnew Bitmap(cursorPath);
 
-                   // Resize the bitmap to larger cursor size (64x64)
-                   Bitmap^ cursorBmp = gcnew Bitmap(originalBmp, 64, 64);
+                  
+                   Bitmap^ cursorBmp = gcnew Bitmap(originalBmp, 24, 24);
 
-                   // Define hotspot (center of the image)
+                   
                    System::Drawing::Point hotspot(32, 32);
 
-                   // Create cursor from bitmap
+                  
                    IntPtr hIcon = cursorBmp->GetHicon();
                    System::Windows::Forms::Cursor^ customCursor = gcnew System::Windows::Forms::Cursor(hIcon);
 
-                   // Set the form's cursor
+                   
                    this->Cursor = customCursor;
 
-                   // Clean up
+                   
                    DestroyIcon(hIcon);
                    delete originalBmp;
                    delete cursorBmp;

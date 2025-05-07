@@ -80,6 +80,7 @@ namespace BasuraHero {
 			this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &GameOver::GameOver_KeyDown);
 			this->ResumeLayout(false);
 			this->PerformLayout();
+
 		}
 #pragma endregion
 	private: System::Void GameOver_Load(System::Object^ sender, System::EventArgs^ e) {
@@ -96,13 +97,15 @@ namespace BasuraHero {
 
 		   // Added function to handle the menu action
 	private: void MenuButtonAction() {
-		// Set switch flag
-		this->switchToStart = true;
-		// Set dialog result to OK
-		this->DialogResult = System::Windows::Forms::DialogResult::OK;
-		// Explicitly close the form - this is key!
-		this->Close();
+		
+
+		this->switchToStart = true; // Set the flag
+		this->DialogResult = System::Windows::Forms::DialogResult::OK; // Signal the main loop
+		this->Close(); // Close the form
+		Console::WriteLine("MenuButtonAction triggered");
+		Console::WriteLine("GameOver form closed with switchToStart = " + this->switchToStart);
 	}
+
 
 		   // Added keyboard handler for accessibility
 	private: System::Void GameOver_KeyDown(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e) {

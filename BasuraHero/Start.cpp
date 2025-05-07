@@ -33,9 +33,13 @@ int main() {
         if (userForm->ShowDialog() != System::Windows::Forms::DialogResult::OK || !userForm->switchToStart) {
             // Show GameOver form if User form doesn't loop back
             GameOver^ gameOverForm = gcnew GameOver();
-            if (gameOverForm->ShowDialog() != System::Windows::Forms::DialogResult::OK || !gameOverForm->switchToStart) {
-                break; // Exit if GameOver form is closed or doesn't loop back
+            if (gameOverForm->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
+                Console::WriteLine("GameOver form closed with switchToStart = " + gameOverForm->switchToStart);
+                if (gameOverForm->switchToStart) {
+                    continue; // Directly loop back to Start form
+                }
             }
+            break; // Exit if GameOver form is closed or doesn't loop back
         }
     }
 
