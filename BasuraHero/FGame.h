@@ -1,5 +1,7 @@
 #pragma once
 #include "GameOver.h"
+#include "GameSession.h"
+#include <string>
 
 namespace BasuraHero {
 
@@ -18,7 +20,7 @@ namespace BasuraHero {
             InitializeComponent();
 
            
-            gameTime = 60;
+            session.Reset(60, 3, 10);
             countdownTimer = gcnew System::Windows::Forms::Timer();
             countdownTimer->Interval = 1000;
             countdownTimer->Tick += gcnew System::EventHandler(this, &FGame::countdownTimer_Tick);
@@ -43,16 +45,6 @@ namespace BasuraHero {
             // Initialize cursor-related variables
             activeBin = BinType::None;
 
-            // Initialize score
-            playerScore = 0;
-            scoreMultiplier = 1;
-
-            // Initialize lives
-            playerLives = 3;
-
-            // Save original fall speed
-            originalFallSpeed = 10;
-            currentFallSpeed = originalFallSpeed;
         }
 
     protected:
@@ -98,15 +90,10 @@ namespace BasuraHero {
            };
 
            BinType activeBin;
-           int gameTime;
-           int playerScore; // Player's score
-           int playerLives; // Player's lives
-           int scoreMultiplier; // Score multiplier for powerup
-           int originalFallSpeed; // Original fall speed
+           GameSession session;
     private: System::Windows::Forms::Label^ binTxt;
     private: System::Windows::Forms::Label^ powerTxt;
 
-           int currentFallSpeed; // Current fall speed
 
            void UpdateBinText()
            {
@@ -137,7 +124,7 @@ namespace BasuraHero {
                bool hasPowerup = false;
 
               
-               if (scoreMultiplier > 1)
+               if (session.HasScoreMultiplier())
                {
                    powerTxt->Text = "X2 SCORE";
                    powerTxt->ForeColor = System::Drawing::Color::Yellow;
@@ -145,7 +132,7 @@ namespace BasuraHero {
                }
 
                
-               if (currentFallSpeed < originalFallSpeed)
+               if (session.HasSlowdown())
                {
                    powerTxt->Text = "SLOWED";
                    powerTxt->ForeColor = System::Drawing::Color::Cyan;
@@ -170,13 +157,10 @@ namespace BasuraHero {
            
            void LoseLife()
            {
-               playerLives--;
-
-              
+               bool gameEnded = session.LoseLife();
                UpdateHeartDisplay();
 
-              
-               if (playerLives <= 0) {
+               if (gameEnded) {
                    countdownTimer->Stop();
                    fallTimer->Stop();
                    spawnTimer->Stop();
@@ -188,9 +172,9 @@ namespace BasuraHero {
            void UpdateHeartDisplay()
            {
                // Hide hearts based on remaining lives
-               heart1->Visible = (playerLives >= 1);
-               heart2->Visible = (playerLives >= 2);
-               heart3->Visible = (playerLives >= 3);
+               heart1->Visible = (session.Lives() >= 1);
+               heart2->Visible = (session.Lives() >= 2);
+               heart3->Visible = (session.Lives() >= 3);
            }
 
            
@@ -246,10 +230,10 @@ namespace BasuraHero {
            void UpdateScoreDisplay()
            {
                // Format the score with leading zeros
-               scorelbl->Text = playerScore.ToString("00000");
+               scorelbl->Text = session.Score().ToString("00000");
 
                // If score multiplier is active, change the color to yellow
-               if (scoreMultiplier > 1) {
+               if (session.HasScoreMultiplier()) {
                    scorelbl->ForeColor = System::Drawing::Color::Yellow;
                }
                else {
@@ -261,7 +245,7 @@ namespace BasuraHero {
            void scoreMultiplierTimer_Tick(System::Object^ sender, System::EventArgs^ e)
            {
                scoreMultiplierTimer->Stop();
-               scoreMultiplier = 1; // Reset multiplier
+               session.ResetScoreMultiplier(); // Reset multiplier
                UpdateScoreDisplay(); // Reset color
                UpdatePowerupText(); // Update powerup text
            }
@@ -270,7 +254,7 @@ namespace BasuraHero {
            void slowDownTimer_Tick(System::Object^ sender, System::EventArgs^ e)
            {
                slowDownTimer->Stop();
-               currentFallSpeed = originalFallSpeed; // Reset fall speed
+               session.ResetSlowdown(); // Reset fall speed
                UpdatePowerupText(); // Update powerup text
            }
 
@@ -294,7 +278,7 @@ namespace BasuraHero {
                {
                case SpecialItemType::ScoreMultiplier:
                    // Double score multiplier
-                   scoreMultiplier = 2;
+                   session.ActivateScoreMultiplier();
                    // Update score display for visual feedback
                    UpdateScoreDisplay();
                    // Reset any active multiplier timer
@@ -306,7 +290,7 @@ namespace BasuraHero {
 
                case SpecialItemType::SlowDown:
                    // Slow down falling objects
-                   currentFallSpeed = originalFallSpeed / 2;
+                   session.ActivateSlowdown();
                    // Reset any active slow down timer
                    slowDownTimer->Stop();
                    // Start the slow down countdown
@@ -538,7 +522,7 @@ namespace BasuraHero {
         spawnTimer->Start();
 
         // Initialize timer display
-        lblTime->Text = gameTime.ToString();
+        lblTime->Text = session.TimeRemaining().ToString();
 
         // Initialize score display
         UpdateScoreDisplay();
@@ -590,10 +574,10 @@ namespace BasuraHero {
 
     private: System::Void countdownTimer_Tick(System::Object^ sender, System::EventArgs^ e)
     {
-        gameTime--;
-        lblTime->Text = gameTime.ToString();
+        int remainingTime = session.TickCountdown();
+        lblTime->Text = remainingTime.ToString();
 
-        if (gameTime <= 0)
+        if (remainingTime <= 0)
         {
             countdownTimer->Stop();
             fallTimer->Stop();
@@ -613,7 +597,7 @@ namespace BasuraHero {
 
                 if (garbageItem != nullptr) {
                     // Move the garbage item down using the current fall speed
-                    garbageItem->Top += currentFallSpeed;
+                    garbageItem->Top += session.CurrentFallSpeed();
 
                     // Check if garbage is out of bounds
                     if (garbageItem->Top > this->Height)
@@ -648,29 +632,9 @@ namespace BasuraHero {
                Random^ rand = gcnew Random();
                int randomIndex = rand->Next(1, 13); // 1-9 for regular garbage, 10 for multiplier, 11 for slowdown, 12 for bomb
                String^ folderPath = "ResourcesUsed\\GarbageIcons\\";
-               String^ imagePath;
-               String^ itemTag;
-
-               if (randomIndex == 10) {
-                   // Score multiplier powerup
-                   imagePath = folderPath + "up1.png";
-                   itemTag = "special:multiplier";
-               }
-               else if (randomIndex == 11) {
-                   // Slow down powerup
-                   imagePath = folderPath + "up2.png";
-                   itemTag = "special:slowdown";
-               }
-               else if (randomIndex == 12) {
-                   // Bomb
-                   imagePath = folderPath + "bomb1.png";
-                   itemTag = "special:bomb";
-               }
-               else {
-                   // Regular garbage
-                   imagePath = folderPath + randomIndex.ToString() + ".png";
-                   itemTag = "falling:" + randomIndex.ToString();
-               }
+               SpawnRuleResult spawnRule = session.ResolveSpawnRule(randomIndex);
+               String^ imagePath = folderPath + gcnew String(spawnRule.imageName.c_str());
+               String^ itemTag = gcnew String(spawnRule.itemTag.c_str());
 
                PictureBox^ garbage = gcnew PictureBox();
                garbage->Size = System::Drawing::Size(75, 75);
@@ -722,7 +686,7 @@ namespace BasuraHero {
                            // Check if correct bin is selected
                            if (activeBin == garbageType) {
                                // Correct bin - award points (with multiplier if active)
-                               playerScore += 10 * scoreMultiplier;
+                               session.AddCorrectSortPoints();
                                UpdateScoreDisplay();
                            }
                            else {
@@ -730,7 +694,7 @@ namespace BasuraHero {
                                LoseLife();
 
                                // Wrong bin - subtract points
-                               playerScore = Math::Max(0, playerScore - 5); // Ensure score doesn't go below 0
+                               session.ApplyWrongSortPenalty();
                                UpdateScoreDisplay();
                            }
                        }

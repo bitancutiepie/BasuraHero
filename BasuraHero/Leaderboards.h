@@ -150,7 +150,9 @@ namespace BasuraHero {
 			MessageBoxIcon::Question
 		);
 
-		Application::Exit();
+		if (result == System::Windows::Forms::DialogResult::Yes) {
+			Application::Exit();
+		}
 	}
 private: System::Void btnMenu_Click(System::Object^ sender, System::EventArgs^ e) {
 }
@@ -169,7 +171,9 @@ private: System::Void exitbtn_Click(System::Object^ sender, System::EventArgs^ e
 		MessageBoxIcon::Question
 	);
 
-	Application::Exit();
+	if (result == System::Windows::Forms::DialogResult::Yes) {
+		Application::Exit();
+	}
 }
 private: System::Void tableLayoutPanel1_Paint(System::Object^ sender, System::Windows::Forms::PaintEventArgs^ e) {
 }
