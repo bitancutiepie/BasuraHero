@@ -9,6 +9,7 @@
 #include "User.h"
 #include "Start.h" 
 #include "FGame.h"
+#include "AppConfig.h"
 
 
 namespace BasuraHero {
@@ -250,7 +251,7 @@ private: System::Void lblConfirm_Click(System::Object^ sender, System::EventArgs
 	String^ gender = comboGender->Text;  // Get the selected gender from the combobox
 
 	// Connection string - adjust to your local database
-	String^ connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;Initial Catalog=BasuraHeroDB;Integrated Security=True";  // Ensure your database name is correct
+	String^ connectionString = AppConfig::DbConnectionString;
 
 	// SQL Query to check if the username already exists
 	String^ checkQuery = "SELECT COUNT(*) FROM UserData WHERE Username = @username";
